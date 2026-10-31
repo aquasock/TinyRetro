@@ -1,0 +1,15 @@
+# Build output
+build/
+*/build/
+*.img
+*.fw
+*.bin
+*.elf
+*.map
+partitions.bin
+partitions.csv
+sdkconfig.old
+# Editor and OS noise
+__pycache__/
+.DS_Store
+.vscode/

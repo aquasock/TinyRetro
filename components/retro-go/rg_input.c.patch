@@ -1,0 +1,34 @@
+diff --git a/components/retro-go/rg_input.c b/components/retro-go/rg_input.c
+index b49c05e..23bb182 100644
+--- a/components/retro-go/rg_input.c
++++ b/components/retro-go/rg_input.c
+@@ -1,5 +1,6 @@
+ #include "rg_system.h"
+ #include "rg_input.h"
++#include "rg_wiimote.h"
+ 
+ #include <stdlib.h>
+ #include <string.h>
+@@ -199,6 +200,22 @@ bool rg_input_read_gamepad_raw(uint32_t *out)
+     }
+ #endif
+ 
++#if defined(RG_GAMEPAD_WII_MAP)
++    /* Wii extension controller (Classic Controller or nunchuck) on I2C. */
++    {
++        static bool wii_started;
++        if (!wii_started)
++        {
++            wii_started = true;
++            rg_wiimote_scan();
++            rg_wiimote_init();
++        }
++        uint32_t wii_keys = 0;
++        if (rg_wiimote_read(&wii_keys))
++            state |= wii_keys;
++    }
++#endif
++
+ #if defined(RG_GAMEPAD_VIRT_MAP)
+     for (size_t i = 0; i < RG_COUNT(keymap_virt); ++i)
+     {

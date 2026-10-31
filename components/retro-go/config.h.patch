@@ -1,0 +1,13 @@
+diff --git a/components/retro-go/config.h b/components/retro-go/config.h
+index ad3b70d..4ddf7bd 100644
+--- a/components/retro-go/config.h
++++ b/components/retro-go/config.h
+@@ -16,6 +16,8 @@
+ #include "targets/esplay-micro/config.h"
+ #elif defined(RG_TARGET_ESP32_S3_DEVKIT)
+ #include "targets/esp32-s3-devkit/config.h"
++#elif defined(RG_TARGET_NANO_ESP32)
++#include "targets/nano-esp32/config.h"
+ #elif defined(RG_TARGET_FRI3D_2024)
+ #include "targets/fri3d-2024/config.h"
+ #elif defined(RG_TARGET_BYTEBOI_REV1)
