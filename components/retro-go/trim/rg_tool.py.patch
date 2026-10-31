@@ -1,0 +1,18 @@
+diff --git a/rg_tool.py b/rg_tool.py
+index e5837816..25146211 100755
+--- a/rg_tool.py
++++ b/rg_tool.py
+@@ -19,8 +19,11 @@ PROJECT_NAME = os.getenv("PROJECT_NAME", "Retro-Go")
+ PROJECT_ICON = os.getenv("PROJECT_ICON", "assets/icon.raw")
+ PROJECT_APPS = {
+   # Project name  Type, SubType, Size
+-  'launcher':     [0, 16, 1048576],
+-  'retro-core':   [0, 16, 1048576],
++  # TinyRetro: launcher needs more than 1 MB (it was at 95%) and retro-core,
++  # trimmed to Game Boy and NES, needs well under 1 MB. Sized for the Nano
++  # ESP32's 16 MB: 1.25 + 0.75 MB of apps leaves room for a 13 MB FAT volume.
++  'launcher':     [0, 16, 1310720],
++  'retro-core':   [0, 16, 786432],
+   'prboom-go':    [0, 16, 786432],
+   'gwenesis':     [0, 16, 1048576],
+   'fmsx':         [0, 16, 589824],

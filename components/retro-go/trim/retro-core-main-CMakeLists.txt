@@ -1,0 +1,18 @@
+set(COMPONENT_SRCDIRS ".")
+set(COMPONENT_ADD_INCLUDEDIRS ".")
+
+# TinyRetro: only the Game Boy / Game Boy Color and NES front ends are built,
+# matching the trimmed COMPONENTS list in ../CMakeLists.txt. The other core
+# front ends are excluded because their emulator components are gone, and
+# register_component() globs every .c in this directory. Restore both lists
+# together when adding a core back.
+set(COMPONENT_SRCEXCLUDE
+    "main_snes.c"
+    "main_pce.c"
+    "main_sms.c"
+    "main_lynx.cpp"
+    "main_gw.c"
+)
+
+register_component()
+rg_setup_compile_options(-O2 -Wno-error=format)

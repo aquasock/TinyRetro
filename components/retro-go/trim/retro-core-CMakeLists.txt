@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.5)
+# Trimmed for the Nano ESP32: Game Boy / Game Boy Color (gnuboy) and NES
+# (nofrendo) only. The other cores are removed to free flash for ROMs.
+# Upstream: "main retro-go nofrendo gnuboy pce-go gw-emulator handy smsplus snes9x"
+set(COMPONENTS "main retro-go gnuboy nofrendo")
+set(RG_ENABLE_NETWORKING 0)
+include(../base.cmake)
+project(retro-core)

@@ -22,6 +22,9 @@ components/retro-go/rg_wiimote.h
 components/retro-go/rg_input.c.patch
 components/retro-go/config.h.patch
                     the two one-block edits to upstream files
+components/retro-go/trim/
+                    the trimmed build: Game Boy, Game Boy Color and NES only,
+                    plus the 13 MB partition layout. See its README.
 ```
 
 ## Applying it
@@ -35,6 +38,9 @@ cp -r /path/to/TinyRetro/components/retro-go/targets/nano-esp32 \
       components/retro-go/targets/
 cp /path/to/TinyRetro/components/retro-go/rg_wiimote.* components/retro-go/
 git apply /path/to/TinyRetro/components/retro-go/*.patch
+
+# optional: trim to GB/GBC + NES and a 13 MB ROM volume
+cp -r /path/to/TinyRetro/components/retro-go/trim/* /tmp/  # see trim/README.md
 
 python3 rg_tool.py build-img --target nano-esp32 --fatsize 8388608
 ```
