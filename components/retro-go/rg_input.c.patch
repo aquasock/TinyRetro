@@ -1,5 +1,5 @@
 diff --git a/components/retro-go/rg_input.c b/components/retro-go/rg_input.c
-index b49c05e..23bb182 100644
+index b49c05e9..23bb1827 100644
 --- a/components/retro-go/rg_input.c
 +++ b/components/retro-go/rg_input.c
 @@ -1,5 +1,6 @@

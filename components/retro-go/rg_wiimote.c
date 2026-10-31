@@ -171,11 +171,17 @@ static rg_wii_kind_t identify(void)
             s_last_id[0], s_last_id[1], s_last_id[2],
             s_last_id[3], s_last_id[4], s_last_id[5]);
 
-    /* Nunchuck: 00 00 A4 20 00 00. Classic and the NES/SNES receivers:
-     * 00 00 A4 20 01 01 (format byte differs but byte 4 is 0x01). */
+    /* Words 0..3 identify the family: 00 00 A4 20. Byte 5 is the device:
+     * 0x00 is a nunchuck (and reports 00 00 A4 20 00 00 before any format
+     * write), 0x01 is a Classic Controller or a receiver for the NES/SNES
+     * Classic. Byte 4 is the ACTIVE DATA FORMAT, not the device type -- it
+     * reads 0x00 in format 1 and 0x03 after a format-3 write, so treating
+     * byte 4 as the discriminator misidentified a Classic in format 1 as a
+     * nunchuck and then decoded its 8-byte report with the nunchuck's
+     * two-button table. */
     if (s_last_id[0] == 0x00 && s_last_id[1] == 0x00 && s_last_id[2] == 0xA4 && s_last_id[3] == 0x20)
     {
-        if (s_last_id[4] == 0x00)
+        if (s_last_id[5] == 0x00)
             return RG_WII_NUNCHUCK;
         return RG_WII_CLASSIC;
     }

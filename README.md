@@ -131,17 +131,49 @@ The remaining bits follow the sourced format-3 table and use the same layout
 bit 5, L on byte 6 bit 5, R on byte 6 bit 1, minus → Select on byte 6 bit 4,
 plus → Start on byte 6 bit 2, Home → Menu).
 
+## Getting ROMs onto the board
+
+retro-go scans `/fs/roms/<short_name>` — `/fs/roms/nes`, `/fs/roms/gb`,
+`/fs/roms/gbc`. Anything else is invisible, and a wrong layout looks identical
+to a wrong build: the mount succeeds and the tab says "list empty".
+
+**Zips must not use a data descriptor.** `rg_storage_unzip_file()` reads the
+local file header and takes both sizes from it:
+
+```c
+output_buffer_size = header.uncompressed_size;
+stream_remaining   = header.compressed_size;
+```
+
+Archives written in streaming style carry `flags & 0x08` and leave both fields
+zero in the local header, with the real values only in the central directory.
+retro-go then allocates nothing and fails on every ROM with "failed to open the
+zip". MiSTer's ROM packs are like this, and so is much else.
+
+`tools/fix_zips.py` rewrites them so the sizes are in the local header and
+verifies the result:
+
+```bash
+python3 tools/fix_zips.py <rom_dir> out --layout roms \
+    --system-map "nes=nes,gb=gb,gbc=gbc" --force
+```
+
+It is idempotent on already-good archives, skips multi-entry zips (retro-go
+only takes the first match), and fails if a CRC changes.
+
 ## State
 
-Working on hardware: 320×240 panel, the launcher and its tabs, storage mounted
-from the FAT partition, and the Classic Controller driving navigation.
+**Working on hardware:** the 320×240 panel, launcher and tabs, FAT storage, the
+Classic Controller, and **NES games at 60 FPS**. Balloon Fight runs at
+`FPS:60 (S:30 R:30)` with `BUSY:27%` and 8.1 MB of PSRAM free.
 
-Not working yet:
+Not working or not verified:
 
 - **No audio.** The ESP32-S3 has no internal DAC and nothing is wired to I2S,
   so retro-go's sink is a dummy.
-- **No games tested.** There are no ROMs on the filesystem and no emulator has
-  been run; the launcher and the input path are what is proven.
+- **Game Boy has not been run.** Only one NES title has been played.
+- **SNES-era frame rates are unknown** on this chip; only a 60 FPS-capable NES
+  title has been measured.
 - **The four on-board PiTFT switches are unmapped.** They would need wires from
   HAT pins 11/13/15/16 to spare Nano pins.
 
