@@ -11,10 +11,33 @@
 #define RG_STORAGE_ROOT             "/fs"
 #define RG_STORAGE_FLASH_PARTITION  "vfs"
 
-// Audio: the ESP32-S3 has no internal DAC, and nothing is wired to I2S here.
-// Silent until a DAC is added; the emulators run either way.
+// Audio: the ESP32-S3 has no internal DAC, so external I2S only.
+//
+// Wired for an Adafruit I2S Stereo Decoder (UDA1334A, product 3678). It needs
+// no MCLK -- a built-in PLL derives the clock from BCLK -- and accepts 3.3 V
+// logic, which is what this board has. Line-level output, so an amplifier and
+// speaker follow it.
+//
+//   decoder   Nano    GPIO
+//   -------   -----   ----
+//   Vin       3V3      -     (decoder is 3.3 V; do not use VBUS)
+//   GND       GND      -
+//   LRC       D5        8    = RG_GPIO_SND_I2S_WS
+//   BCLK      D6        9    = RG_GPIO_SND_I2S_BCK
+//   DIN       D7       10    = RG_GPIO_SND_I2S_DATA
+//   WSEL/SF0/SF1          left open: default I2S format
+//
+// The decoder is NOT fitted yet: it is on order. RG_AUDIO_USE_EXT_DAC stays 0
+// so the image on the board matches the hardware on the bench -- enabling it
+// with no decoder present only moves the sink from "Dummy" to a driver that
+// pushes DMA into unconnected pins. Set it to 1 and rebuild once the decoder
+// is wired; the pin defines below are already the ones it will use.
 #define RG_AUDIO_USE_INT_DAC        0   // 0 = Disable, 1 = GPIO25, 2 = GPIO26, 3 = Both
-#define RG_AUDIO_USE_EXT_DAC        0   // 0 = Disable, 1 = Enable
+#define RG_AUDIO_USE_EXT_DAC        0   // 0 = Disable, 1 = Enable (set 1 when wired)
+
+#define RG_GPIO_SND_I2S_BCK         GPIO_NUM_9     /* D6 */
+#define RG_GPIO_SND_I2S_WS          GPIO_NUM_8     /* D5 */
+#define RG_GPIO_SND_I2S_DATA        GPIO_NUM_10    /* D7 */
 
 // Video: ILI9340, 320x240, on the ESP32-S3's hardware SPI pins.
 // The HAT is designed for 32 MHz (see Adafruit's pitft22 device-tree overlay),

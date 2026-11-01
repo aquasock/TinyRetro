@@ -169,8 +169,17 @@ Classic Controller, and **NES games at 60 FPS**. Balloon Fight runs at
 
 Not working or not verified:
 
-- **No audio.** The ESP32-S3 has no internal DAC and nothing is wired to I2S,
-  so retro-go's sink is a dummy.
+- **No audio yet.** The ESP32-S3 has no internal DAC, so an external I2S decoder
+  is required. The target is written for an **Adafruit I2S Stereo Decoder
+  (UDA1334A, product 3678)** and the pin defines are already in `config.h`:
+  LRC → D5, BCLK → D6, DIN → D7, on 3V3. The part is on order and not fitted,
+  so `RG_AUDIO_USE_EXT_DAC` is 0 and the sink is a dummy. Flip it to 1 and
+  rebuild once the decoder is wired.
+
+  Three reasons that decoder: no MCLK (its PLL derives the clock from BCLK), it
+  accepts 3.3 V logic, and it is a line-level output for an amp and speaker.
+  The MAX98357A was the other candidate -- cheaper, mono, drives a speaker
+  directly -- and would also work with no code change.
 - **Game Boy has not been run.** Only one NES title has been played.
 - **SNES-era frame rates are unknown** on this chip; only a 60 FPS-capable NES
   title has been measured.
